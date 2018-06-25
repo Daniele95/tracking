@@ -15,6 +15,7 @@ user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" charset="UTF-8">
   <script src="initWebcam.js"></script>
   <script src="trackVideo.js"></script>
   <script src="ransac.js"></script>
+  <script src="drawPlane.js"></script>
 
 </head>
 
@@ -26,7 +27,7 @@ user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" charset="UTF-8">
   <div style='position: absolute; top: 10px; width:100%; text-align: center; z-index: 1;'>
   </div>
 
-  <canvas id="canvas" width="640" height="480"></canvas>
+  <canvas class="canvas" id="canvas" width="640" height="480"></canvas>
     
   <!-- DEBUG BUTTONS-->
   
@@ -35,7 +36,7 @@ user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" charset="UTF-8">
 
   <div>
 	  <label for="threshold">Threshold:</label>
-	  <input id="threshold" type="range" value=".65" max="1" min="0" step=".01">
+	  <input id="threshold" type="range" value=".3" max="1" min="0" step=".01">
   </div>
 
   <div>

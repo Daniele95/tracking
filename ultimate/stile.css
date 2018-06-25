@@ -1,24 +1,27 @@
+.canvas {
+  position:absolute;
+  top: 0px;  
+  right: 0px;
 
-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  }
-  
-  .display {
-    position: relative;
-  }
-  
-  video {
-    display: block;
-  }
-  
-  canvas {
-  }
-.debug{
-  position: absolute;
-  align-items: right;
-  
-  float: right;
+  width: 50%;
+  border: 3px solid green;
+  padding: 10px;
+}
+
+.webcam {
+
+  margin: auto;
+  width: 50%;
+  border: 3px solid green;
+  padding: 10px;
+}
+
+.tattoo {
+  position:absolute;
+  top: 0px;  
+  right: 0px;
+
+  width: 50%;
+  border: 3px solid green;
+  padding: 10px;
 }

@@ -77,11 +77,13 @@ var fitTriplo = function(imageData,ctx, myRect) {
 
 
 
-function trackVideo_(element) {
+function trackVideo_(element, position) {
 
   var canvas = document.getElementById('canvas');
   var context = canvas.getContext('2d');
 
+  let framesIsFalse = 0;
+  
   let myRect = {posX:140, posY:100, w:120, h:200};
   var riconoscimentoFaccia = false;
   document.getElementById("riconosciuto").addEventListener("click", function(){
@@ -102,10 +104,8 @@ function trackVideo_(element) {
     // controllo dov'è la faccina rispetto a dove ho lasciato il rettangolo
     var dir = contaPunti(imageData, myRect);
     var trovataFaccina = fitTriplo(imageData,context, myRect);
-    console.log(trovataFaccina);
 
     if(riconoscimentoFaccia == true && trovataFaccina == true) {
-
         context.putImageData(imageData, 0, 0);
 
         myRect.posY += Math.round((-dir.nord+dir.sud)/100);
@@ -114,7 +114,12 @@ function trackVideo_(element) {
         if(myRect.posY > canvas.height-myRect.h) myRect.posY = canvas.height-myRect.h;
         if(myRect.posX < 0) myRect.posX = 0;
         if(myRect.posX > canvas.width-myRect.w) myRect.posX = canvas.width-myRect.w;
-    }
+        framesIsFalse = 0;
+        position.x = myRect.posX;
+        position.y = myRect.posY;
+
+    } else framesIsFalse++;
+    if(framesIsFalse > 40) myRect = {posX:140, posY:100, w:120, h:200};
 
     // disegno il rettangolo
     context.strokeRect(myRect.posX, myRect.posY, myRect.w, myRect.h);
