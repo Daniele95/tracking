@@ -1,0 +1,34 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Tracking Color Blobs in Webcam Feed Using Tracking.js</title>
+    <link rel="stylesheet" href="stile.css">
+    <script src="sobel.js"></script>
+    <script src="filtri.js"></script>
+    <script src="tracking.min.js"></script>
+    <script src="webcamScript.js"></script>
+    <script src="trackVideo.js"></script>
+  </head>
+
+  <body>
+
+    <div class="titolo">In rosso la camera con
+      i dati modificati da me, colore naturale è la webcam originale </div>
+    <div class="display">
+      <video id="webcam" width="640" height="480" autoplay></video>
+      <canvas id="canvas" width="640" height="480"></canvas>
+    </div>
+    <div class="debug" id="debug"></div>
+    <div>
+        <label for="threshold">Tolerance:</label>
+        <input id="threshold" type="range" value=".65" max="1" min="0" step=".01">
+    </div>
+    <div><input id="riconosciuto" type="button" value="riconosciuto"/></div>
+
+  </body>
+
+</html>

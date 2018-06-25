@@ -1,0 +1,24 @@
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  
+  .display {
+    position: relative;
+  }
+  
+  video {
+    display: block;
+  }
+  
+  canvas {
+  }
+.debug{
+  position: absolute;
+  align-items: right;
+  
+  float: right;
+}

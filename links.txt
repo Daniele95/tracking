@@ -1,0 +1,13 @@
+<!------------------INSERIRE http://blog.acipo.com/blob-detection-js/-------------->
+<!------------------https://www.hitl.washington.edu/artoolkit/Papers/ART02-Tutorial.pdf-------------->
+<!------------------https://infi.nl/nieuws/marker-detection-for-augmented-reality-applications/-------------->
+<!----------------OTTIMIZZAZIONE: 
+http://www.smartjava.org/content/face-detection-using-html5-javascript-webrtc-websockets-jetty-and-javacvopencv ---->
+
+<!-- se necessario vedere anche https://inspirit.github.io/jsfeat/#imgproc-->
+<!-- ottimo per labeling componenti connesse: 
+https://www.codeproject.com/Articles/825200/An-Implementation-Of-The-Connected-Component-Label
+https://www.sciencedirect.com/science/article/pii/S0031320317301693----->
+
+
+<!-- più avanti mi servira https://docs.opencv.org/3.1.0/dc/d2c/tutorial_real_time_pose.html --->
