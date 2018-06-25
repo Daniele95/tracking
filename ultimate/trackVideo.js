@@ -40,17 +40,41 @@ function contaPunti(imageData, myRect) {
   return dir;
 }
 
-function fitTriplo(imageData,ctx, myRect) {
+var fitTriplo = function(imageData,ctx, myRect) {
   var points = imageData.points;
 
-  var pLeft = [];
-  for (let i = 0; i < points.length; i++ )
-    if (points[i].x > Math.round(myRect.h/4) && points[i].y < Math.round(myRect.w/2))
-      pLeft.push({ x: points[i].x, y: points[i].y });
+  var top = Math.round(myRect.h/3);
+  var center = Math.round(myRect.w/2);
 
-  var retta = ransac(pLeft, 1);
-  render(ctx, retta, myRect);
+  var pLeft = [];
+  var pRight = [];
+  var pTop = [];
+  for (let i = 0; i < points.length; i++ ) {
+    if (points[i].y > top && points[i].x < center )
+      pLeft.push({ x: points[i].x, y: points[i].y });
+    if (points[i].y > top && points[i].x > center )
+      pRight.push({ x: points[i].x, y: points[i].y });
+    if (points[i].y < top)
+      pTop.push({ x: points[i].x, y: points[i].y });
+  }
+
+  var rettaLeft = ransac(pLeft, 1)
+  var rettaRight = ransac(pRight, 1)
+  var rettaTop = ransac(pTop, 1)
+  render(ctx, rettaLeft, myRect);
+  render(ctx, rettaRight, myRect);
+  render(ctx, rettaTop, myRect);
+
+  let mLeft = Math.round(rettaLeft.a/rettaLeft.b);
+  let mRight = Math.round(rettaRight.a/rettaRight.b);
+  let mTop = rettaTop.a/rettaTop.b;
+  
+  if (Math.abs(mLeft) > 5 && Math.abs(mRight) > 5 && Math.abs(mTop) < 0.9)
+    return true;
+  else return false;
 }
+
+
 
 function trackVideo_(element) {
 
@@ -58,9 +82,9 @@ function trackVideo_(element) {
   var context = canvas.getContext('2d');
 
   let myRect = {posX:140, posY:100, w:120, h:200};
-  var facciaRiconosciuta = false;
+  var riconoscimentoFaccia = false;
   document.getElementById("riconosciuto").addEventListener("click", function(){
-      facciaRiconosciuta = true;
+    riconoscimentoFaccia = true;
   });
 
   var requestAnimationFrame_ = function() {
@@ -77,9 +101,10 @@ function trackVideo_(element) {
 
     // controllo dov'è la faccina rispetto a dove ho lasciato il rettangolo
     var dir = contaPunti(imageData, myRect);
-    fitTriplo(imageData,context, myRect);
+    var trovataFaccina = fitTriplo(imageData,context, myRect);
+    console.log(trovataFaccina);
 
-    if(facciaRiconosciuta == true) {
+    if(riconoscimentoFaccia == true && trovataFaccina == true) {
         myRect.posY += Math.round((-dir.nord+dir.sud)/100);
         myRect.posX += Math.round((dir.est-dir.ovest)/100);
     }
