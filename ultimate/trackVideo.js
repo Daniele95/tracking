@@ -61,16 +61,17 @@ var fitTriplo = function(imageData,ctx, myRect) {
   var rettaLeft = ransac(pLeft, 1)
   var rettaRight = ransac(pRight, 1)
   var rettaTop = ransac(pTop, 1)
-  render(ctx, rettaLeft, myRect);
-  render(ctx, rettaRight, myRect);
-  render(ctx, rettaTop, myRect);
 
   let mLeft = Math.round(rettaLeft.a/rettaLeft.b);
   let mRight = Math.round(rettaRight.a/rettaRight.b);
   let mTop = rettaTop.a/rettaTop.b;
   
-  if (Math.abs(mLeft) > 5 && Math.abs(mRight) > 5 && Math.abs(mTop) < 0.9)
+  if (Math.abs(mLeft) > 5 && Math.abs(mRight) > 5 && Math.abs(mTop) < 0.9) {    
+    render(ctx, rettaLeft, myRect);
+    render(ctx, rettaRight, myRect);
+    render(ctx, rettaTop, myRect);
     return true;
+  }
   else return false;
 }
 
@@ -97,7 +98,6 @@ function trackVideo_(element) {
     // qui associo a imageData l'attributo POINTS che poi uso in contaPunti e nel fitTriplo
     var imageData = filtraZona(context, myRect);
     rendiRossa(imageData);
-    context.putImageData(imageData, 0, 0);
 
     // controllo dov'è la faccina rispetto a dove ho lasciato il rettangolo
     var dir = contaPunti(imageData, myRect);
@@ -105,8 +105,15 @@ function trackVideo_(element) {
     console.log(trovataFaccina);
 
     if(riconoscimentoFaccia == true && trovataFaccina == true) {
+
+        context.putImageData(imageData, 0, 0);
+
         myRect.posY += Math.round((-dir.nord+dir.sud)/100);
         myRect.posX += Math.round((dir.est-dir.ovest)/100);
+        if(myRect.posY < 0) myRect.posY = 0;
+        if(myRect.posY > canvas.height-myRect.h) myRect.posY = canvas.height-myRect.h;
+        if(myRect.posX < 0) myRect.posX = 0;
+        if(myRect.posX > canvas.width-myRect.w) myRect.posX = canvas.width-myRect.w;
     }
 
     // disegno il rettangolo
