@@ -7,7 +7,7 @@ var numgl = {
     numgl.canvas = document.createElement("canvas");
 
     // XXX: This also defines the viewport, so make sure to also change it later.
-    numgl.canvas.width = numgl.canvas.height = 0;
+    numgl.canvas.width = numgl.canvas.height = 300;
 
     try {
       // { preserveDrawingBuffer: true } enables readPixels() to read the computed values from the canvas.
@@ -275,6 +275,7 @@ var numgl = {
   },
 
   show_canvas: function(Id, parentElementId) {
+    console.log("ciao")
     // Set scene width.
     if (!numgl.canvas.width) {
       numgl.canvas.width = numgl.textures[Id].width;

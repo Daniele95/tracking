@@ -17,6 +17,9 @@ arToolkitSource.init( function onReady() {
   webcam.classList.add("webcam");
   webcam.id = 'webcam';
 
+ // let canvas = document.getElementById("canvas");
+ // onResize();
+  
   // Show frames per second.
   numgl.set_fps_element("fps");
   var webcamId = numgl.store_webcam("webcam");  
@@ -26,16 +29,13 @@ arToolkitSource.init( function onReady() {
   numgl.do_it();
 
 
-  let canvas = document.getElementById("canvas");
-  onResize()
-
-
+/*
   myTrack = new Tracker();
   myPlane = new Plane();
   let canvas2 = document.getElementsByTagName('canvas')[1];
   canvas2.classList.add("tattoo");
 
-  animate();
+  animate();*/
 });
 
 function animate() {
@@ -47,7 +47,7 @@ function animate() {
 // handle resize
 window.addEventListener('resize', function(){
   onResize();
-  resizeCanvas_();
+  //resizeCanvas_();
 });
 
 function onResize(){
