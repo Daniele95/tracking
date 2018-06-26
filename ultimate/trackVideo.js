@@ -1,6 +1,6 @@
 "use strict";
 
-function clearCanvas(context){
+function clearCanvas(context,canvas){
   var myData = context.getImageData(0,0,canvas.width,canvas.height);
   for(let i = 0; i<myData.data.length;i++) 
     myData.data[i] = 0;
@@ -76,25 +76,40 @@ var fitTriplo = function(imageData,ctx, myRect) {
 }
 
 
+function Tracker(element,position) {
 
-function trackVideo_(element, position) {
+  this.canvas = document.getElementById('canvas');
+  this.context = this.canvas.getContext('2d');
 
-  var canvas = document.getElementById('canvas');
-  var context = canvas.getContext('2d');
-
-  let framesIsFalse = 0;
+  this.framesIsFalse = 0;
   
-  let myRect = {posX:140, posY:100, w:120, h:200};
-  var riconoscimentoFaccia = false;
+  this.myRect = {posX:140, posY:100, w:120, h:200};
+  
+  this.riconoscimentoFaccia = true;
   document.getElementById("riconosciuto").addEventListener("click", function(){
-    riconoscimentoFaccia = true;
+    this.riconoscimentoFaccia = true;
   });
+}
 
-  var requestAnimationFrame_ = function() {
+Tracker.prototype.track = function() {
       
-    clearCanvas(context);
+    let context = this.context;
+    let canvas = this.canvas;
+    let framesIsFalse = this.framesIsFalse;
+    let myRect = this.myRect;
+    let riconoscimentoFaccia = this.riconoscimentoFaccia;
+
+    clearCanvas(context,canvas);
     // disegno il feed della webcam nella mia canvas
-    context.drawImage(element, 0, 0, canvas.width, canvas.height);
+    let webcam = document.getElementsByTagName('video')[0];
+    context.drawImage(webcam, 0, 0, canvas.width, canvas.height);
+
+    /*
+    var myData = context.getImageData(0,0,canvas.width,canvas.height);
+    rendiRossa(myData);
+    context.putImageData(myData,0,0);
+    context.globalAlpha = 0.9 ;
+    */
     
     // applico i filtri alla canvas
     // qui associo a imageData l'attributo POINTS che poi uso in contaPunti e nel fitTriplo
@@ -123,14 +138,5 @@ function trackVideo_(element, position) {
 
     // disegno il rettangolo
     context.strokeRect(myRect.posX, myRect.posY, myRect.w, myRect.h);
-    
-    
-    var frameNumber = window.requestAnimationFrame(function() {
-      requestAnimationFrame_();
-    });
-    
-  };
-    
-  requestAnimationFrame_();
+
 };
-  

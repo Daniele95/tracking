@@ -1,19 +1,7 @@
 .canvas {
-  position:absolute;
-  top: 0px;  
-  right: 0px;
-
-  width: 50%;
-  border: 3px solid green;
-  padding: 10px;
 }
 
 .webcam {
-
-  margin: auto;
-  width: 50%;
-  border: 3px solid green;
-  padding: 10px;
 }
 
 .tattoo {
@@ -24,4 +12,7 @@
   width: 50%;
   border: 3px solid green;
   padding: 10px;
+}
+
+.debug {
 }

@@ -1,4 +1,6 @@
-function drawPlane(position) {
+"use strict";
+
+function Plane() {
     /*
     // RequestAnimationFrame shim
 	window.requestAnimFrame = ( function( callback ) {
@@ -13,16 +15,15 @@ function drawPlane(position) {
     })();
     */
 	// scene
-	var scene = new THREE.Scene();
+	this.scene = new THREE.Scene();
 	// camera
-	var camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
-	camera.position.set( 0, - 450, 400 );
-	camera.rotation.x = 45 * ( Math.PI / 180 );
-	scene.add( camera );
+	this.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
+	this.camera.position.set( 0, - 450, 400 );
+	this.camera.rotation.x = 45 * ( Math.PI / 180 );
+	this.scene.add( this.camera );
 	// plane
     var geometry = new THREE.PlaneGeometry( 300, 300 );
 
-    // assuming you want the texture to repeat in both directions:
     var texture,material;
     texture = THREE.ImageUtils.loadTexture( "tattoo.png" );
 
@@ -33,21 +34,17 @@ function drawPlane(position) {
     //plane.position.x = 100;
     //var material = new THREE.MeshBasicMaterial( { color: 0x0000ff } );
     
-	var mesh = new THREE.Mesh( geometry, material );
-	scene.add( mesh );
+	this.mesh = new THREE.Mesh( geometry, material );
+	this.scene.add( this.mesh );
 	// renderer
-	var renderer = new THREE.WebGLRenderer( { alpha: true });
-	renderer.setSize( 640, 480 );
-	document.body.appendChild( renderer.domElement );   
-	animate();
-	function animate() {
-		requestAnimationFrame( animate );
-		render();
-	}
-	function render() {
-		mesh.position.x = position.x;
-		mesh.position.y = -position.y;
-		renderer.render( scene, camera );
-    }
-    
+	this.renderer = new THREE.WebGLRenderer( { alpha: true });
+	this.renderer.setSize( 640, 480 );
+	document.body.appendChild( this.renderer.domElement ); 
+
+}
+
+Plane.prototype.draw = function(position) {
+	this.mesh.position.x = position.x;
+	this.mesh.position.y = -position.y;
+	this.renderer.render( this.scene, this.camera );
 }
