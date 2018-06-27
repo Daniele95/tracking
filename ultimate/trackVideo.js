@@ -83,7 +83,13 @@ function Tracker(element,position) {
 
   this.framesIsFalse = 0;
   
-  this.myRect = {posX:140, posY:100, w:120, h:200};
+  let px = Math.round(canvas.offsetWidth/ 8);
+  let py = Math.round(canvas.offsetHeight/ 8);
+  let sx = Math.round(canvas.offsetWidth/ 4);
+  let sy = Math.round(canvas.offsetHeight/ 4);
+  //this.myRect = {posX:140, posY:100, w:120, h:200};
+  this.myRect = {posX:px, posY:py, w:sx, h:sy};
+  this.myRectOld = this.myRect;
   
   this.riconoscimentoFaccia = true;
   document.getElementById("riconosciuto").addEventListener("click", function(){
@@ -102,14 +108,16 @@ Tracker.prototype.track = function() {
     clearCanvas(context,canvas);
     // disegno il feed della webcam nella mia canvas
     let webcam = document.getElementsByTagName('video')[0];
-    context.drawImage(webcam, 0, 0, canvas.width, canvas.height);
 
-    /*
+
+    context.drawImage(webcam,0,0,300,150);
+
+    
     var myData = context.getImageData(0,0,canvas.width,canvas.height);
     rendiRossa(myData);
     context.putImageData(myData,0,0);
-    context.globalAlpha = 0.9 ;
-    */
+    context.globalAlpha = 0.5 ;
+    
     
     // applico i filtri alla canvas
     // qui associo a imageData l'attributo POINTS che poi uso in contaPunti e nel fitTriplo
@@ -134,7 +142,7 @@ Tracker.prototype.track = function() {
         position.y = myRect.posY;
 
     } else framesIsFalse++;
-    if(framesIsFalse > 40) myRect = {posX:140, posY:100, w:120, h:200};
+    if(framesIsFalse > 40) this.myRect = this.myRectOld;
 
     // disegno il rettangolo
     context.strokeRect(myRect.posX, myRect.posY, myRect.w, myRect.h);

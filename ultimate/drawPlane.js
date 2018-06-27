@@ -24,11 +24,10 @@ function Plane() {
 	// plane
     var geometry = new THREE.PlaneGeometry( 300, 300 );
 
-    var texture,material;
-    texture = THREE.ImageUtils.loadTexture( "tattoo.png" );
+	var texture = new THREE.TextureLoader().load( 'tatto.png' );
+	// immediately use the texture for material creation
+	var material = new THREE.MeshBasicMaterial( { map: texture } );
 
-
-    material = new THREE.MeshLambertMaterial({ map : texture });
     //plane = new THREE.Mesh(new THREE.PlaneGeometry(400, 3500), material);
     //plane.material.side = THREE.DoubleSide;
     //plane.position.x = 100;
@@ -38,7 +37,10 @@ function Plane() {
 	this.scene.add( this.mesh );
 	// renderer
 	this.renderer = new THREE.WebGLRenderer( { alpha: true });
-	this.renderer.setSize( 640, 480 );
+	this.renderer.setSize( window.innerWidth, window.innerHeight );
+	this.renderer.domElement.style.position = 'absolute'
+	this.renderer.domElement.style.top = '0px'
+	this.renderer.domElement.style.left = '0px'
 	document.body.appendChild( this.renderer.domElement ); 
 
 }
