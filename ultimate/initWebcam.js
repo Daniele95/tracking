@@ -1,6 +1,6 @@
 "use strict";
 
-var webcam,canvas, myTrack, myPlane;
+var webcam,canvas, myTrack, myPlane, trovataFaccina;
 var position = {x:0, y:0};
 
 var arToolkitSource = new THREEx.ArToolkitSource({
@@ -17,6 +17,12 @@ arToolkitSource.init( function onReady() {
   webcam.classList.add("webcam");
   webcam.id = 'webcam';
   canvas = document.getElementById("canvas");
+
+  webcam.style.width="1200px";
+  canvas.style.width="1200px";
+  webcam.style.height="800px";
+  canvas.style.height="800px";
+
   onResize();
   
   myTrack = new Tracker();
@@ -29,7 +35,11 @@ arToolkitSource.init( function onReady() {
 
 function animate() {
   myTrack.track(webcam,position);
-  myPlane.draw(position);
+  if(myTrack.trovataFaccina) {
+    console.log(myTrack.trovataFaccina)
+    myPlane.draw(position);
+  }
+
   window.requestAnimFrame(animate);
 }
 
@@ -37,18 +47,9 @@ function animate() {
 window.addEventListener('resize', onResize);
 
 function onResize(){
- // arToolkitSource.onResizeElement()
-//  resizeElement(canvas);
-    /*let dim = window.innerWidth;
 
-    webcam.style.width = dim+'px';
-    webcam.style.height = "auto";
-
-    canvas.style.width = dim+'px'; 
-    canvas.style.height = Math.round(dim*0.75)+'px';*/
-
-    resizeElement(webcam, webcam);
-    resizeElement(canvas, webcam);
+    //resizeElement(webcam, webcam);
+    //resizeElement(canvas, webcam);
 };
 
 

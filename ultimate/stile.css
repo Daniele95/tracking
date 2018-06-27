@@ -6,12 +6,13 @@ canvas {
 }
 
 .webcam {
+  
 }
 
 .tattoo {
-	display:none;
 }
 
 .debug {
-	display:none;
+  position:absolute;
+  top: 800px;
 }

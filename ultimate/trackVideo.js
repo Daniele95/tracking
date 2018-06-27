@@ -1,5 +1,7 @@
 "use strict";
 
+var debug = false;
+
 function clearCanvas(context,canvas){
   var myData = context.getImageData(0,0,canvas.width,canvas.height);
   for(let i = 0; i<myData.data.length;i++) 
@@ -67,9 +69,11 @@ var fitTriplo = function(imageData,ctx, myRect) {
   let mTop = rettaTop.a/rettaTop.b;
   
   if (Math.abs(mLeft) > 5 && Math.abs(mRight) > 5 && Math.abs(mTop) < 0.9) {    
-    render(ctx, rettaLeft, myRect);
-    render(ctx, rettaRight, myRect);
-    render(ctx, rettaTop, myRect);
+    if(debug) {
+      render(ctx, rettaLeft, myRect);
+      render(ctx, rettaRight, myRect);
+      render(ctx, rettaTop, myRect);    
+    } 
     return true;
   }
   else return false;
@@ -82,42 +86,38 @@ function Tracker(element,position) {
   this.context = this.canvas.getContext('2d');
 
   this.framesIsFalse = 0;
+  this.trovataFaccina = false;
   
-  let px = Math.round(canvas.offsetWidth/ 8);
-  let py = Math.round(canvas.offsetHeight/ 8);
-  let sx = Math.round(canvas.offsetWidth/ 4);
-  let sy = Math.round(canvas.offsetHeight/ 4);
-  //this.myRect = {posX:140, posY:100, w:120, h:200};
-  this.myRect = {posX:px, posY:py, w:sx, h:sy};
+  let px = Math.round(window.innerWidth/ 16);
+  let py = Math.round(window.innerHeight/ 16);
+  let sx = Math.round(window.innerWidth/ 8);
+  let sy = Math.round(window.innerHeight/ 8);
+  this.myRect = {posX:150, posY:80, w:60, h:70};
+  //this.myRect = {posX:px, posY:py, w:sx, h:sy};
   this.myRectOld = this.myRect;
   
-  this.riconoscimentoFaccia = true;
-  document.getElementById("riconosciuto").addEventListener("click", function(){
-    this.riconoscimentoFaccia = true;
-  });
+
 }
 
 Tracker.prototype.track = function() {
       
     let context = this.context;
     let canvas = this.canvas;
-    let framesIsFalse = this.framesIsFalse;
     let myRect = this.myRect;
-    let riconoscimentoFaccia = this.riconoscimentoFaccia;
 
     clearCanvas(context,canvas);
     // disegno il feed della webcam nella mia canvas
     let webcam = document.getElementsByTagName('video')[0];
 
-
-    context.drawImage(webcam,0,0,300,150);
-
     
+    context.drawImage(webcam,0,0,300,150);
+/*
+   
     var myData = context.getImageData(0,0,canvas.width,canvas.height);
     rendiRossa(myData);
     context.putImageData(myData,0,0);
-    context.globalAlpha = 0.5 ;
-    
+    context.globalAlpha = 0.5;
+    */
     
     // applico i filtri alla canvas
     // qui associo a imageData l'attributo POINTS che poi uso in contaPunti e nel fitTriplo
@@ -126,10 +126,10 @@ Tracker.prototype.track = function() {
 
     // controllo dov'è la faccina rispetto a dove ho lasciato il rettangolo
     var dir = contaPunti(imageData, myRect);
-    var trovataFaccina = fitTriplo(imageData,context, myRect);
+    this.trovataFaccina = fitTriplo(imageData,context, myRect);
 
-    if(riconoscimentoFaccia == true && trovataFaccina == true) {
-        context.putImageData(imageData, 0, 0);
+    if(this.trovataFaccina == true) {
+        if(debug) context.putImageData(imageData, 0, 0);  
 
         myRect.posY += Math.round((-dir.nord+dir.sud)/100);
         myRect.posX += Math.round((dir.est-dir.ovest)/100);
@@ -137,14 +137,22 @@ Tracker.prototype.track = function() {
         if(myRect.posY > canvas.height-myRect.h) myRect.posY = canvas.height-myRect.h;
         if(myRect.posX < 0) myRect.posX = 0;
         if(myRect.posX > canvas.width-myRect.w) myRect.posX = canvas.width-myRect.w;
-        framesIsFalse = 0;
+        this.framesIsFalse = 0;
         position.x = myRect.posX;
         position.y = myRect.posY;
 
-    } else framesIsFalse++;
-    if(framesIsFalse > 40) this.myRect = this.myRectOld;
+  } else this.framesIsFalse++;
+  if(this.framesIsFalse > 40)  {
+      this.myRect = this.myRectOld;
+      this.trovataFaccina = false;
+  }
 
-    // disegno il rettangolo
-    context.strokeRect(myRect.posX, myRect.posY, myRect.w, myRect.h);
+    // disegno il rettangolo   <---------------------------------------
+ if(debug)   context.strokeRect(myRect.posX, myRect.posY, myRect.w, myRect.h);
+ else  {
+    
+  //context.globalAlpha=0.2;
+  //context.strokeRect(myRect.posX, myRect.posY, myRect.w, myRect.h);
+ }
 
 };
