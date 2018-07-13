@@ -40,11 +40,9 @@ arToolkitSource.init( function onReady() {
   webcam.width = 640
   webcam.height = 480
 
-
-    numgl.set_fps_element("fps");
-    var webcamId = numgl.store_webcam("webcam");  
-    numgl.show_canvas(webcamId);
-
+  numgl.set_fps_element("fps");
+  var webcamId = numgl.store_webcam("webcam");  
+  numgl.show_canvas(webcamId);
 
   canvas = document.getElementsByTagName("canvas")[0]
   canvas.width = 640
@@ -59,14 +57,19 @@ arToolkitSource.init( function onReady() {
   //let canvas2 = document.getElementsByTagName('canvas')[1];
   //canvas2.classList.add("tattoo");
 
-
-	numgl.threshold(webcamId,90);
-	numgl.do_it();
-slider.oninput = function() {
-	numgl.threshold(webcamId,this.value);
-	numgl.do_it();
-  console.log(this.value)
-}
+  console.log(webcamId)
+  var result = numgl.convolution(webcamId,[-1,-1,-1,-1,8,-1,-1,-1,-1],25);
+  //1,0,-1,0,0,0,-1,0,1
+  //0,1,0,1,-4,1,0,1,0
+  //-1,-1,-1,-1,8,-1,-1,-1,-1
+  numgl.threshold(result, 95)
+  numgl.do_it();
+    
+  slider.oninput = function() {
+    numgl.threshold(webcamId,this.value);
+    numgl.do_it();
+    console.log(this.value)
+  }
 
   //onResize()
 //  animate();
@@ -84,9 +87,9 @@ function animate() {
 
 function onResize() {  
   webcam.style.width="200px";
-  webcam.style.height=200*0.75+"px";
+  webcam.style.height=250+"px";
   canvas.style.width="200px";
-  canvas.style.height=200*0.75+"px";
+  canvas.style.height=250+"px";
 }
 //window.addEventListener('resize', onResize);
 

@@ -423,7 +423,7 @@ var numgl = {
   },
 
   // Creates a GLSL function that performs convolutions. Args - kernel is a JS array.
-  convolution: function(textureId, kernel) {
+  convolution: function(textureId, kernel,brightness) {
     var matrixRows = matrixCols = Math.sqrt(kernel.length),
       halfSize = Math.floor(matrixRows / 2),
       vecIdx = 0,
@@ -476,7 +476,7 @@ var numgl = {
     // Create convolution function.
     numgl.fsUserFunctions = "vec3 convolution() {\n" +
       "vec4 sum = " + finalStr + " \n" +
-      "return (sum/" + numgl.float_string(totalKernelWeight) + ").rgb; }\n";
+      "return (sum/" + numgl.float_string(totalKernelWeight) + ").rgb*"+brightness+".; }\n";
     finalColor = numgl.fs_main_variable("convolution();", "vec3");
     finalColor = numgl.vec4(finalColor, "1.0");
 
