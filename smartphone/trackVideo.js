@@ -1,12 +1,13 @@
 "use strict";
 
-var debug = false;
+var debug = true;
 
-function clearCanvas(context,canvas){
-  var myData = context.getImageData(0,0,canvas.width,canvas.height);
-  for(let i = 0; i<myData.data.length;i++) 
-    myData.data[i] = 0;
-  context.putImageData(myData,0,0);
+function clearCanvas(imageData) {
+  for (var i = 0; i<imageData.data.length; i+=4 ) {
+    imageData.data[i+1] =0;
+    imageData.data[i+2] =0;
+    imageData.data[i+3] =0;
+  }
 }
 
 function rendiRossa(imageData) {  
@@ -16,27 +17,26 @@ function rendiRossa(imageData) {
   }
 }
 
-function filtraZona(context, myRect) {
-  var imageData = context.getImageData(myRect.posX, myRect.posY, myRect.w, myRect.h);
+function filtraZona(imageData) {
   imageData = Sobel(imageData).toImageData();
   imageData.points = [];
   var thresh = document.getElementById("threshold").value;
-  imageData = threshold(imageData, imageData.points, thresh, myRect);
+  imageData = threshold(imageData, imageData.points, thresh);
   return imageData;
 }
 
-function contaPunti(imageData, myRect) {
+function contaPunti(imageData) {
   var dir = {nord:0, sud:0, est:0, ovest:0};
-  let deltaY = Math.round(myRect.h/5.5);
-  let deltaX = Math.round(myRect.w/5.5);
+  let deltaY = Math.round(imageData.height/5.5);
+  let deltaX = Math.round(imageData.width/5.5);
   for(var i = 0; i<imageData.points.length; i++) {
-    if(imageData.points[i].y<myRect.h-deltaY)
+    if(imageData.points[i].y<imageData.height-deltaY)
       dir.nord++;
     if(imageData.points[i].y>deltaY)
       dir.sud++;
     if(imageData.points[i].x>deltaX)
       dir.est++;
-    if(imageData.points[i].x<myRect.w-deltaX)
+    if(imageData.points[i].x<imageData.width-deltaX)
       dir.ovest++;
     }
   return dir;
@@ -80,6 +80,8 @@ var fitTriplo = function(imageData,ctx, myRect) {
 }
 
 
+
+
 function Tracker(element,position) {
 
   this.canvas = document.getElementById('canvas');
@@ -88,44 +90,33 @@ function Tracker(element,position) {
   this.framesIsFalse = 0;
   this.trovataFaccina = false;
   
-  let px = Math.round(window.innerWidth/ 16);
-  let py = Math.round(window.innerHeight/ 16);
-  let sx = Math.round(window.innerWidth/ 8);
-  let sy = Math.round(window.innerHeight/ 8);
-  this.myRect = {posX:150, posY:80, w:60, h:70};
+  //let px = Math.round(window.innerWidth/ 16);
   //this.myRect = {posX:px, posY:py, w:sx, h:sy};
+  this.myRect = {posX:150, posY:80, w:60, h:70};
   this.myRectOld = this.myRect;
-  
 
 }
 
 Tracker.prototype.track = function() {
-      
     let context = this.context;
     let canvas = this.canvas;
     let myRect = this.myRect;
-
-    clearCanvas(context,canvas);
+    
+/*
+    clearCanvas(context.getImageData(0,0,canvas.width,canvas.height));
+    
     // disegno il feed della webcam nella mia canvas
     let webcam = document.getElementsByTagName('video')[0];
-
-    
     context.drawImage(webcam,0,0,300,150);
-/*
-   
-    var myData = context.getImageData(0,0,canvas.width,canvas.height);
-    rendiRossa(myData);
-    context.putImageData(myData,0,0);
-    context.globalAlpha = 0.5;
-    */
+    //context.globalAlpha = 0.5;
     
-    // applico i filtri alla canvas
+    // Sobel + Soglia
     // qui associo a imageData l'attributo POINTS che poi uso in contaPunti e nel fitTriplo
-    var imageData = filtraZona(context, myRect);
-    rendiRossa(imageData);
+    var imageData = filtraZona(context.getImageData(
+      myRect.posX, myRect.posY, myRect.w, myRect.h));
 
     // controllo dov'è la faccina rispetto a dove ho lasciato il rettangolo
-    var dir = contaPunti(imageData, myRect);
+    var dir = contaPunti(imageData);
     this.trovataFaccina = fitTriplo(imageData,context, myRect);
 
     if(this.trovataFaccina == true) {
@@ -142,17 +133,13 @@ Tracker.prototype.track = function() {
         position.y = myRect.posY;
 
   } else this.framesIsFalse++;
+
   if(this.framesIsFalse > 40)  {
       this.myRect = this.myRectOld;
       this.trovataFaccina = false;
   }
 
-    // disegno il rettangolo   <---------------------------------------
- if(debug)   context.strokeRect(myRect.posX, myRect.posY, myRect.w, myRect.h);
- else  {
-    
-  //context.globalAlpha=0.2;
-  //context.strokeRect(myRect.posX, myRect.posY, myRect.w, myRect.h);
- }
-
+  // disegno il rettangolo
+  if(debug)context.strokeRect(myRect.posX, myRect.posY, myRect.w, myRect.h);
+*/
 };

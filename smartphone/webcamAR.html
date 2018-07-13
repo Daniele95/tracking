@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, 
+user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" charset="UTF-8">
+<head>
+
+  <title>Tracking di tatuaggi</title>
+  <link rel="stylesheet" href="stile.css">	
+
+  <script src='https://jeromeetienne.github.io/AR.js/three.js/examples/vendor/three.js/build/three.min.js'></script>
+  <script src="https://jeromeetienne.github.io/AR.js/three.js/build/ar.js"></script>
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+
+  <script src="numgl.js"></script>
+
+  <script src="sobel.js"></script>
+  <script src="filtri.js"></script>
+  <script src="initWebcam.js"></script>
+  <script src="trackVideo.js"></script>
+  <script src="ransac.js"></script>
+  <script src="drawPlane.js"></script>
+
+</head>
+
+<body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
+
+    
+  <!-- DEBUG BUTTONS-->
+  
+  <div class="log" id="log"></div>
+  <div class="debug" id="debug">    
+
+    <div>
+      <label for="threshold">Threshold:</label>
+      <input id="threshold" type="range" value="10" max="100" min="0" step="1">
+    </div>
+
+
+
+  </div>
+  
+</body>
+
+</html>

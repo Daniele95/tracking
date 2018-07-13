@@ -6,16 +6,16 @@
   };
   
 
-  var threshold = function(imageData, points, thresh, myRect) {
+  var threshold = function(imageData, points, thresh) {
     data = imageData.data;
     for (var i = 0; i < data.length; i += 4) {
       r = data[i]/255;
       g = data[i+1] / 255;
       b = data[i+2] / 255;
-      yCoord = Math.floor ( ( (i+1)/4 ) / myRect.w ); // divisione intera
-      xCoord = Math.max( Math.floor( ( (i+1)/4 ) - yCoord*myRect.w ), 0 );
+      yCoord = Math.floor ( ( (i+1)/4 ) / imageData.width ); // divisione intera
+      xCoord = Math.max( Math.floor( ( (i+1)/4 ) - yCoord*imageData.width ), 0 );
       // scurisco i bordi      
-      if (xCoord == 0 || xCoord == myRect.w-1) {
+      if (xCoord == 0 || xCoord == imageData.width-1) {
         data[i] = data[i+1] = 0;
         data[i+2] = 0;
       } //

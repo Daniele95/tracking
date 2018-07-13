@@ -1,5 +1,17 @@
 "use strict";
 
+window.onload =function () {
+  var old = console.log;
+  var logger = document.getElementById('log');
+  console.log = function (message) {
+      if (typeof message == 'object') {
+          logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />';
+      } else {
+          logger.innerHTML += message + '<br />';
+      }
+  }
+}
+
 var webcam,canvas, myTrack, myPlane, trovataFaccina;
 var position = {x:0, y:0};
 
@@ -7,24 +19,14 @@ var arToolkitSource = new THREEx.ArToolkitSource({
   sourceType : 'webcam',
 });
 
-var resizeCanvas_ = function() {
-  canvas.width = webcam.offsetWidth;
-  canvas.height = webcam.offsetWidth;
-};
-
 arToolkitSource.init( function onReady() {
   webcam = document.getElementsByTagName('video')[0];
   webcam.classList.add("webcam");
   webcam.id = 'webcam';
   canvas = document.getElementById("canvas");
 
-  webcam.style.width="1200px";
-  canvas.style.width="1200px";
-  webcam.style.height="800px";
-  canvas.style.height="800px";
+  onResize()
 
-  onResize();
-  
   myTrack = new Tracker();
   myPlane = new Plane();
   let canvas2 = document.getElementsByTagName('canvas')[1];
@@ -36,22 +38,18 @@ arToolkitSource.init( function onReady() {
 function animate() {
   myTrack.track(webcam,position);
   if(myTrack.trovataFaccina) {
-    console.log(myTrack.trovataFaccina)
     myPlane.draw(position);
   }
-
   window.requestAnimFrame(animate);
 }
 
-// handle resize
+function onResize() {  
+  webcam.style.width="800px";
+  canvas.style.width="800px";
+  webcam.style.height="500px";
+  canvas.style.height="500px";
+}
 window.addEventListener('resize', onResize);
-
-function onResize(){
-
-    //resizeElement(webcam, webcam);
-    //resizeElement(canvas, webcam);
-};
-
 
 window.requestAnimFrame = ( function( callback ) {
 		return window.requestAnimationFrame ||
@@ -68,17 +66,9 @@ function resizeElement (domElement,sourceVideo) {
   var screenWidth = window.innerWidth
   var screenHeight = window.innerHeight
 
-  // sanity check
-  ///console.assert(arguments.length === 0)
-
-  // compute sourceWidth, sourceHeight
-      var sourceWidth = sourceVideo.videoWidth
-      var sourceHeight = sourceVideo.videoHeight
- 
-
-  // compute sourceAspect
+  var sourceWidth = sourceVideo.videoWidth
+  var sourceHeight = sourceVideo.videoHeight
   var sourceAspect = sourceWidth / sourceHeight
-  // compute screenAspect
   var screenAspect = screenWidth / screenHeight
 
   // if screenAspect < sourceAspect, then change the width, else change the height
