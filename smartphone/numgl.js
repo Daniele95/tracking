@@ -101,12 +101,29 @@ var numgl = {
       numgl.fragColor = "texture2D(uTexture" + vidId + ", vTextCoords)";
     }
 
-    numgl.handle_scene();
-    numgl.init_texture(vidId);
+    numgl.handle_scene()
+    numgl.init_texture(vidId)
 
     // FIXME: better fps.
     if (!numgl.fpsElement) {
       numgl.fpsElement = {};
+    }
+
+    var readPixels = function() {
+      if(! numgl.rect)
+        numgl.rect = {posX:0, posY:0, w:numgl.width, h:numgl.height}
+      var pixels = new Uint8Array(numgl.rect.w *numgl.rect.h * 4);
+      numgl.gl.readPixels(numgl.rect.posX, numgl.rect.posY, numgl.rect.w, numgl.rect.h, numgl.gl.RGBA, numgl.gl.UNSIGNED_BYTE, pixels);
+      numgl.myPixelData = pixels
+
+      var canvas = document.getElementsByTagName("canvas")[1]
+      var ctx = canvas.getContext("2d");
+      var imgData=ctx.getImageData(numgl.rect.posX,numgl.rect.posY,numgl.rect.w,numgl.rect.h);
+     // console.log(pixels.length)
+      for(var i=0; i<imgData.data.length; i++)
+      imgData.data[i] = pixels[i]
+      ctx.putImageData(imgData,0,0);
+
     }
 
     var loop = function() {
@@ -133,6 +150,8 @@ var numgl = {
 
       // The bound and enabled vertex data are set in the numgl.handle_scene() outside of this loop.
       numgl.gl.drawArrays(numgl.gl.TRIANGLES, 0, 6);
+
+      readPixels()
 
       numgl.requestId = window.requestAnimationFrame(loop);
     }
@@ -695,12 +714,28 @@ var numgl = {
     // XXX: https://code.google.com/p/glsl-unit/issues/detail?id=9
     // TLDR: Fragment shaders have no default float precision, so varying/uniform floats need precision declarations.
     // TLDR TLDR: Always put the precision declaration at the beginning of the fragment shader!
+    
+    var rectangle = ""
+    if(numgl.rect) {
+      // misurato a partire da in alto a sinistra, come nella canvas 2d
+      var startY =(numgl.rect.posY) / numgl.canvas.height
+      var endY = (numgl.rect.posY + numgl.rect.h) / numgl.canvas.height
+      var startX =  (numgl.rect.posX) / numgl.canvas.width
+      var endX = (numgl.rect.posX + numgl.rect.w) / numgl.canvas.width
+      console.log(startY + " "+ endY + " " + startX+" "+ endX) 
+      rectangle = "vec2 myUv = vTextCoords; myUv.y = 1.-myUv.y;"+
+      "if(myUv.y<"+startY+" || myUv.y >"+endY+
+      " || myUv.x<"+startX+" || myUv.x >"+endX+
+      ") discard;"
+    }
+    
     code = numgl.fsFloatPrecision +
       "uniform vec2 uResolution; " +
       globalVariables +
       "varying vec2 vTextCoords; " +
       userFunctions +
       "void main(void) { " +
+      rectangle +
       mainVariables +
       mainCode +
       "gl_FragColor = " + fragColor + "; " +

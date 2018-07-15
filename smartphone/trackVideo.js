@@ -84,8 +84,8 @@ var fitTriplo = function(imageData,ctx, myRect) {
 
 function Tracker(element,position) {
 
-  this.canvas = document.getElementById('canvas');
-  this.context = this.canvas.getContext('2d');
+  this.canvas = document.getElementsByTagName("canvas")[0]
+  
 
   this.framesIsFalse = 0;
   this.trovataFaccina = false;

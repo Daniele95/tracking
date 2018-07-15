@@ -18,12 +18,10 @@ window.onload =function () {
 var slider
 
 function filtri(webcamId, soglia) {
-  // Show frames per second.
-	// Convolution followed by threshold
 //	var convResult = numgl.convolution(webcamId,[-1,-1,-1,0,0,0,1,1,1]);
   console.log(soglia)
-	numgl.threshold(webcamId,soglia);
-	numgl.do_it();
+	numgl.threshold(webcamId,soglia)
+	numgl.do_it()
     
 }
 var webcam,canvas, myTrack, myPlane, trovataFaccina;
@@ -34,13 +32,13 @@ var arToolkitSource = new THREEx.ArToolkitSource({
 });
 
 arToolkitSource.init( function onReady() {
-  webcam = document.getElementsByTagName('video')[0];
+  webcam = document.getElementsByTagName('video')[0]
   webcam.classList.add("webcam")
   webcam.id = 'webcam'
   webcam.width = 640
   webcam.height = 480
 
-  numgl.set_fps_element("fps");
+  numgl.set_fps_element("fps")
   var webcamId = numgl.store_webcam("webcam");  
   numgl.show_canvas(webcamId);
 
@@ -52,27 +50,29 @@ arToolkitSource.init( function onReady() {
   //var x = document.getElementsByTagName("BODY")[0];
  // x.addEventListener("load", webGLStart);
 
- // myTrack = new Tracker();
+  myTrack = new Tracker();
   //myPlane = new Plane();
   //let canvas2 = document.getElementsByTagName('canvas')[1];
   //canvas2.classList.add("tattoo");
-
+  
   console.log(webcamId)
-  var result = numgl.convolution(webcamId,[-1,-1,-1,-1,8,-1,-1,-1,-1],25);
-  //1,0,-1,0,0,0,-1,0,1
-  //0,1,0,1,-4,1,0,1,0
-  //-1,-1,-1,-1,8,-1,-1,-1,-1
-  numgl.threshold(result, 95)
-  numgl.do_it();
-    
-  slider.oninput = function() {
-    numgl.threshold(webcamId,this.value);
-    numgl.do_it();
-    console.log(this.value)
-  }
 
-  //onResize()
-//  animate();
+
+  var canvas222 = document.createElement('canvas');
+  document.body.appendChild(canvas222)
+     var contx=canvas222.getContext("2d");
+
+  var result = numgl.convolution(webcamId,[-1,-1,-1,-1,8,-1,-1,-1,-1],25)
+  // 1,0,-1,0,0,0,-1,0,1
+  // 0,1,0,1,-4,1,0,1,0
+  // -1,-1,-1,-1,8,-1,-1,-1,-1
+  numgl.threshold(result, 30)
+  numgl.rect = {posX:150, posY:80, w:180, h:180}
+  numgl.do_it()
+ // console.log(numgl.myPixelData.length)
+  
+  // onResize()
+  // animate();
 });
 
 
@@ -86,12 +86,25 @@ function animate() {
 }
 
 function onResize() {  
-  webcam.style.width="200px";
-  webcam.style.height=250+"px";
-  canvas.style.width="200px";
-  canvas.style.height=250+"px";
+  webcam.style.width="100%";
+  webcam.style.height="100%";
+  var ratio = webcam.videoHeight/webcam.videoWidth;
+  if(webcam.clientWidth<webcam.clientHeight/ratio) {
+    canvas.style.width="100%";  
+    canvas.style.height="auto";  
+    var offset = webcam.clientHeight/2-webcam.clientWidth*ratio/2
+    canvas.style.top=offset+"px"
+    canvas.style.left="0px"
+  } else {
+    canvas.style.height="100%";
+    canvas.style.width="auto";  
+    var offset = webcam.clientWidth/2-webcam.clientHeight/ratio/2
+    canvas.style.left=offset+"px"
+    canvas.style.top="0px"
+  } 
+  canvas.style.opacity ="0.5";
 }
-//window.addEventListener('resize', onResize);
+window.addEventListener('resize', onResize);
 
 window.requestAnimFrame = ( function( callback ) {
 		return window.requestAnimationFrame ||
