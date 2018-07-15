@@ -58,17 +58,26 @@ arToolkitSource.init( function onReady() {
   console.log(webcamId)
 
 
-  var canvas222 = document.createElement('canvas');
-  document.body.appendChild(canvas222)
-     var contx=canvas222.getContext("2d");
 
   var result = numgl.convolution(webcamId,[-1,-1,-1,-1,8,-1,-1,-1,-1],25)
   // 1,0,-1,0,0,0,-1,0,1
   // 0,1,0,1,-4,1,0,1,0
   // -1,-1,-1,-1,8,-1,-1,-1,-1
   numgl.threshold(result, 30)
-  numgl.rect = {posX:150, posY:80, w:180, h:180}
+  numgl.rect = {posX:150, posY:80, w:200, h:250}
+  
+  var canvas222 = document.createElement('canvas');
+  canvas222.heigth=400
+  canvas222.width=400
+  canvas222.classList.add("customCanvasDebug")
+  document.body.appendChild(canvas222)
+
+  // modifico lo shader nella funzione fs_code
   numgl.do_it()
+// questo chiama numgl.start_loop
+// subito prima ho inserito la mia funzione che legge i pixel
+// e dovrebbe processarli in ransac
+
  // console.log(numgl.myPixelData.length)
   
   // onResize()

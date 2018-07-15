@@ -109,6 +109,9 @@ var numgl = {
       numgl.fpsElement = {};
     }
 
+
+    
+
     var readPixels = function() {
       if(! numgl.rect)
         numgl.rect = {posX:0, posY:0, w:numgl.width, h:numgl.height}
@@ -118,11 +121,26 @@ var numgl = {
 
       var canvas = document.getElementsByTagName("canvas")[1]
       var ctx = canvas.getContext("2d");
-      var imgData=ctx.getImageData(numgl.rect.posX,numgl.rect.posY,numgl.rect.w,numgl.rect.h);
-     // console.log(pixels.length)
-      for(var i=0; i<imgData.data.length; i++)
-      imgData.data[i] = pixels[i]
+      var imgData=ctx.getImageData(0,0,numgl.rect.w,numgl.rect.h);
+
+     var pixels_ridotto = []
+     for (var i=0; i<pixels.length; i+=4) 
+      pixels_ridotto.push(pixels[i]/4)
+
+      // IF DEBUG
+      for(var i=0; i<pixels.length; i+=4) {
+        imgData.data[i] = pixels_ridotto[pixels_ridotto.length-i/4]*2.
+        imgData.data[i+3]=255
+      }
       ctx.putImageData(imgData,0,0);
+      //
+
+        
+      // controllo dov'è la faccina rispetto a dove ho lasciato il rettangolo
+      var dir = contaPunti(pixels_ridotto,numgl.rect);
+   // console.log(dir)
+      //this.trovataFaccina = fitTriplo(pixels_ridotto, numgl.rect);
+
 
     }
 
@@ -692,7 +710,7 @@ var numgl = {
 
     // Update current fragment shader code.
     numgl.fsGlobalVariables += "uniform sampler2D uTexture" + textureId + "; " +
-      "uniform vec2 uTextureSize" + textureId + "; ";
+      "uniform vec2 suTextureSize" + textureId + "; ";
   },
 
   fsFloatPrecision: "precision highp float; ",

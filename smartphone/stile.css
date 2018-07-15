@@ -8,6 +8,10 @@ canvas {
   top: 100px;
 }
 
+.customCanvasDebug {
+
+}
+
 .canvas {
      border-style: solid;
     border-width: 5px;

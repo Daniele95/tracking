@@ -25,7 +25,7 @@ function filtraZona(imageData) {
   return imageData;
 }
 
-function contaPunti(imageData) {
+function contaPuntiOld(imageData) {
   var dir = {nord:0, sud:0, est:0, ovest:0};
   let deltaY = Math.round(imageData.height/5.5);
   let deltaX = Math.round(imageData.width/5.5);
@@ -41,6 +41,28 @@ function contaPunti(imageData) {
     }
   return dir;
 }
+
+
+function contaPunti(imageData, rect) {
+  var dir = {nord:0, sud:0, est:0, ovest:0};
+  let deltaY = Math.round(rect.h/5.5);
+  let deltaX = Math.round(rect.w/5.5);
+  for(var i = 0; i<imageData.length; i++) {
+    var yCoord = Math.floor ( ( (i+1)/4 ) / rect.w ); // divisione intera
+    var xCoord = Math.max( Math.floor( ( (i+1)/4 ) - yCoord*rect.w ), 0 )
+    if(yCoord<rect.h-deltaY)
+      dir.nord++;
+    if(yCoord.y>deltaY)
+      dir.sud++;
+    if(xCoord>deltaX)
+      dir.est++;
+    if(xCoord<rect.w-deltaX)
+      dir.ovest++;
+    }
+  return dir;
+}
+
+
 
 var fitTriplo = function(imageData,ctx, myRect) {
   var points = imageData.points;
@@ -102,7 +124,7 @@ Tracker.prototype.track = function() {
     let canvas = this.canvas;
     let myRect = this.myRect;
     
-/*
+
     clearCanvas(context.getImageData(0,0,canvas.width,canvas.height));
     
     // disegno il feed della webcam nella mia canvas
@@ -141,5 +163,5 @@ Tracker.prototype.track = function() {
 
   // disegno il rettangolo
   if(debug)context.strokeRect(myRect.posX, myRect.posY, myRect.w, myRect.h);
-*/
+
 };
