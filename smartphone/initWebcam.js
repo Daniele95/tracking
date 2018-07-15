@@ -42,7 +42,7 @@ arToolkitSource.init( function onReady() {
   var webcamId = numgl.store_webcam("webcam");  
   numgl.show_canvas(webcamId);
 
-  canvas = document.getElementsByTagName("canvas")[0]
+  canvas = document.getElementsByTagName("canvas")[1]
   canvas.width = 640
   webcam.height = 480
   onResize()
@@ -66,11 +66,6 @@ arToolkitSource.init( function onReady() {
   numgl.threshold(result, 30)
   numgl.rect = {posX:150, posY:80, w:200, h:250}
   
-  var canvas222 = document.createElement('canvas');
-  canvas222.heigth=400
-  canvas222.width=400
-  canvas222.classList.add("customCanvasDebug")
-  document.body.appendChild(canvas222)
 
   // modifico lo shader nella funzione fs_code
   numgl.do_it()

@@ -112,37 +112,6 @@ var numgl = {
 
     
 
-    var readPixels = function() {
-      if(! numgl.rect)
-        numgl.rect = {posX:0, posY:0, w:numgl.width, h:numgl.height}
-      var pixels = new Uint8Array(numgl.rect.w *numgl.rect.h * 4);
-      numgl.gl.readPixels(numgl.rect.posX, numgl.rect.posY, numgl.rect.w, numgl.rect.h, numgl.gl.RGBA, numgl.gl.UNSIGNED_BYTE, pixels);
-      numgl.myPixelData = pixels
-
-      var canvas = document.getElementsByTagName("canvas")[1]
-      var ctx = canvas.getContext("2d");
-      var imgData=ctx.getImageData(0,0,numgl.rect.w,numgl.rect.h);
-
-     var pixels_ridotto = []
-     for (var i=0; i<pixels.length; i+=4) 
-      pixels_ridotto.push(pixels[i]/4)
-
-      // IF DEBUG
-      for(var i=0; i<pixels.length; i+=4) {
-        imgData.data[i] = pixels_ridotto[pixels_ridotto.length-i/4]*2.
-        imgData.data[i+3]=255
-      }
-      ctx.putImageData(imgData,0,0);
-      //
-
-        
-      // controllo dov'è la faccina rispetto a dove ho lasciato il rettangolo
-      var dir = contaPunti(pixels_ridotto,numgl.rect);
-   // console.log(dir)
-      //this.trovataFaccina = fitTriplo(pixels_ridotto, numgl.rect);
-
-
-    }
 
     var loop = function() {
       // FSP stuff - Time in seconds - Taken from http://stackoverflow.com/questions/16432804/recording-fps-in-webgl
@@ -168,7 +137,6 @@ var numgl = {
 
       // The bound and enabled vertex data are set in the numgl.handle_scene() outside of this loop.
       numgl.gl.drawArrays(numgl.gl.TRIANGLES, 0, 6);
-
       readPixels()
 
       numgl.requestId = window.requestAnimationFrame(loop);

@@ -17,6 +17,45 @@ function rendiRossa(imageData) {
   }
 }
 
+var readPixels = function() {
+
+
+  var posY = numgl.gl.drawingBufferHeight-numgl.rect.h-numgl.rect.posY
+  var pixels = new Uint8Array(numgl.rect.w *numgl.rect.h * 4)
+  numgl.gl.readPixels( numgl.rect.posX,posY,numgl.rect.w,numgl.rect.h, numgl.gl.RGBA, numgl.gl.UNSIGNED_BYTE, pixels);
+  numgl.myPixelData = pixels
+
+
+  var pixels_ridotto = []
+  for (var i=0; i<pixels.length; i+=4) 
+   pixels_ridotto.push(pixels[i]/4)
+ 
+
+   var canvas0 = document.getElementsByTagName("canvas")[1]
+
+  var canvas = document.getElementsByTagName("canvas")[0]
+  canvas.width=numgl.rect.w;  
+  canvas.height = numgl.rect.h;  
+  var ctx = canvas.getContext("2d");
+  var imgData=ctx.getImageData(0,0,canvas.width,canvas.height);
+
+  // IF DEBUG
+  for(var i=0; i<pixels.length; i+=4) {
+    imgData.data[i] = pixels[i]//pixels_ridotto[pixels_ridotto.length-i/4]*2.
+    imgData.data[i+3]=255
+  }
+
+  ctx.putImageData(imgData,0,0);
+  //
+
+    
+  // controllo dov'è la faccina rispetto a dove ho lasciato il rettangolo
+  var dir = contaPunti(pixels_ridotto,numgl.rect);
+// console.log(dir)
+  //this.trovataFaccina = fitTriplo(pixels_ridotto, numgl.rect);
+
+
+}
 function filtraZona(imageData) {
   imageData = Sobel(imageData).toImageData();
   imageData.points = [];
