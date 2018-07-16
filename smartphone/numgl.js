@@ -109,7 +109,7 @@ var numgl = {
       numgl.fpsElement = {};
     }
 
-
+    numgl.rectOld = numgl.rect
     
 
 
@@ -137,6 +137,8 @@ var numgl = {
 
       // The bound and enabled vertex data are set in the numgl.handle_scene() outside of this loop.
       numgl.gl.drawArrays(numgl.gl.TRIANGLES, 0, 6);
+
+      
       readPixels()
 
       numgl.requestId = window.requestAnimationFrame(loop);

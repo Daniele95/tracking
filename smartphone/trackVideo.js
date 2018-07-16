@@ -19,7 +19,6 @@ function rendiRossa(imageData) {
 
 var readPixels = function() {
 
-
   var posY = numgl.gl.drawingBufferHeight-numgl.rect.h-numgl.rect.posY
   var pixels = new Uint8Array(numgl.rect.w *numgl.rect.h * 4)
   numgl.gl.readPixels( numgl.rect.posX,posY,numgl.rect.w,numgl.rect.h, numgl.gl.RGBA, numgl.gl.UNSIGNED_BYTE, pixels);
@@ -27,84 +26,85 @@ var readPixels = function() {
 
 
   var pixels_ridotto = []
-  for (var i=0; i<pixels.length; i+=4) 
-   pixels_ridotto.push(pixels[i]/4)
- 
+  for (var i=0; i<pixels.length; i+=4)
+    pixels_ridotto.push(pixels[i]/4) 
 
-   var canvas0 = document.getElementsByTagName("canvas")[1]
 
   var canvas = document.getElementsByTagName("canvas")[0]
   canvas.width=numgl.rect.w;  
   canvas.height = numgl.rect.h;  
   var ctx = canvas.getContext("2d");
+  
   var imgData=ctx.getImageData(0,0,canvas.width,canvas.height);
 
-  // IF DEBUG
+
+  if(! debug) {
+    var canvas0 = document.getElementsByTagName("canvas")[1]
+    canvas0.style.visibility="hidden"
+    canvas.style.visibility="hidden"
+  }
   for(var i=0; i<pixels.length; i+=4) {
-    imgData.data[i] = pixels[i]//pixels_ridotto[pixels_ridotto.length-i/4]*2.
+    imgData.data[i] = pixels_ridotto[pixels_ridotto.length-i/4]*255.
     imgData.data[i+3]=255
   }
-
-  ctx.putImageData(imgData,0,0);
+  
+  ctx.putImageData( imgData,0,0 )
   //
 
-    
   // controllo dov'è la faccina rispetto a dove ho lasciato il rettangolo
-  var dir = contaPunti(pixels_ridotto,numgl.rect);
-// console.log(dir)
-  //this.trovataFaccina = fitTriplo(pixels_ridotto, numgl.rect);
+  var dir = contaPunti(pixels_ridotto,numgl.rect)
 
+  var trovataFaccina = fitTriplo(pixels_ridotto,ctx, numgl.rect)
+
+  if(trovataFaccina== true) {
+      numgl.rect.posY += Math.round((-dir.nord+dir.sud)/100)
+      numgl.rect.posX += Math.round((dir.est-dir.ovest)/100)
+      if(numgl.rect.posY < 0) numgl.rect.posY = 0
+      if(numgl.rect.posY > canvas.height-numgl.rect.h) numgl.rect.posY = canvas.height-numgl.rect.h;
+      if(numgl.rect.posX < 0) numgl.rect.posX = 0;
+      if(numgl.rect.posX > canvas.width-numgl.rect.w) numgl.rect.posX = canvas.width-numgl.rect.w;
+      //  this.framesIsFalse = 0;
+      position.x = numgl.rect.posX;
+      position.y = numgl.rect.posY;
+
+  }/* else this.framesIsFalse++;
+
+if(this.framesIsFalse > 40)  {
+   this.myRect = this.myRectOld;
+   this.trovataFaccina = false;
+}
+*/
+// disegno il rettangolo
+//if(debug)context.strokeRect(myRect.posX, myRect.posY, myRect.w, myRect.h);
 
 }
-function filtraZona(imageData) {
-  imageData = Sobel(imageData).toImageData();
-  imageData.points = [];
-  var thresh = document.getElementById("threshold").value;
-  imageData = threshold(imageData, imageData.points, thresh);
-  return imageData;
-}
 
-function contaPuntiOld(imageData) {
-  var dir = {nord:0, sud:0, est:0, ovest:0};
-  let deltaY = Math.round(imageData.height/5.5);
-  let deltaX = Math.round(imageData.width/5.5);
-  for(var i = 0; i<imageData.points.length; i++) {
-    if(imageData.points[i].y<imageData.height-deltaY)
-      dir.nord++;
-    if(imageData.points[i].y>deltaY)
-      dir.sud++;
-    if(imageData.points[i].x>deltaX)
-      dir.est++;
-    if(imageData.points[i].x<imageData.width-deltaX)
-      dir.ovest++;
-    }
+function contaPunti(pixelsData, rect) {
+  var dir = {nord:0, sud:0, est:0, ovest:0}
+  let deltaY = Math.round(rect.h/5.5)
+  let deltaX = Math.round(rect.w/2.)
+  for(var i = 0; i<pixelsData.length; i++) {
+    if(pixelsData[i]>0) {
+      var yCoord = Math.floor ( i / rect.w ) // divisione intera
+      var xCoord = Math.max( Math.floor( i - yCoord*rect.w ), 0 )
+      
+      if(yCoord>rect.h-deltaY)
+        dir.nord++;
+      if(yCoord<deltaY)
+        dir.sud++;
+      if(xCoord>deltaX)
+        dir.est++;
+      if(xCoord<rect.w-deltaX)
+        dir.ovest++;
+      }
+    } 
+
   return dir;
 }
 
 
-function contaPunti(imageData, rect) {
-  var dir = {nord:0, sud:0, est:0, ovest:0};
-  let deltaY = Math.round(rect.h/5.5);
-  let deltaX = Math.round(rect.w/5.5);
-  for(var i = 0; i<imageData.length; i++) {
-    var yCoord = Math.floor ( ( (i+1)/4 ) / rect.w ); // divisione intera
-    var xCoord = Math.max( Math.floor( ( (i+1)/4 ) - yCoord*rect.w ), 0 )
-    if(yCoord<rect.h-deltaY)
-      dir.nord++;
-    if(yCoord.y>deltaY)
-      dir.sud++;
-    if(xCoord>deltaX)
-      dir.est++;
-    if(xCoord<rect.w-deltaX)
-      dir.ovest++;
-    }
-  return dir;
-}
 
-
-
-var fitTriplo = function(imageData,ctx, myRect) {
-  var points = imageData.points;
+var fitTriplo = function(points,ctx, myRect) {
 
   var top = Math.round(myRect.h/3);
   var center = Math.round(myRect.w/2);
@@ -114,11 +114,11 @@ var fitTriplo = function(imageData,ctx, myRect) {
   var pTop = [];
   for (let i = 0; i < points.length; i++ ) {
     if (points[i].y > top && points[i].x < center )
-      pLeft.push({ x: points[i].x, y: points[i].y });
+      pLeft.push({ x: points[i].x, y: points[i].y })
     if (points[i].y > top && points[i].x > center )
-      pRight.push({ x: points[i].x, y: points[i].y });
+      pRight.push({ x: points[i].x, y: points[i].y })
     if (points[i].y < top)
-      pTop.push({ x: points[i].x, y: points[i].y });
+      pTop.push({ x: points[i].x, y: points[i].y })
   }
 
   var rettaLeft = ransac(pLeft, 1)
